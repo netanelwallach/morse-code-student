@@ -51,8 +51,36 @@ class ScoreTree extends BSTree {
     }
     console.log(result);
   }
-  translateMorse() {
+  translateMorse(str) {
     // this function should translate a given code from Morse to English
+    const morseArr = str.split(" ");
+    let result = "";
+    let letter = "";
+    for (const code of morseArr) {
+      letter = "";
+      if (code === "/") {
+        result += " ";
+      } else {
+        letter = this.findCode(code);
+        result += letter;
+      }
+    }
+    console.log(result);
+  }
+  findCode(str) {
+    // this method should record the path to a given letter
+    if (str === "") {
+      return this.value;
+    } else {
+      let char = str[0];
+      if (char === ".") {
+        //&&  this.leftChild) {
+        return this.leftChild.findCode(str.slice(1));
+      } else if (char === "-") {
+        // && this.rightChild) {
+        return this.rightChild.findCode(str.slice(1));
+      }
+    }
   }
 }
 //initializing the MorseCode tree
@@ -63,7 +91,8 @@ Object.keys(alphabet).forEach((l) => {
 
 morseCode.translateWord("welcome"); // should print .-- . .-.. -.-. --- -- .
 morseCode.translateWord("elevation is cool"); // should print . .-.. . ...- .- - .. --- -. /.. ... /-.-. --- --- .-..
-// morseCode.translateMorse(".... ---- ....");
-// morseCode.translateMorse(
-//   "-. .. -.-. . / .--- --- -... / --- -. / - .... . / .-.. . ... ... --- -.",
-// );
+
+morseCode.translateMorse("... --- ...");
+morseCode.translateMorse(
+  "-. .. -.-. . / .--- --- -... / --- -. / - .... . / .-.. . ... ... --- -.",
+);
