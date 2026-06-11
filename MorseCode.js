@@ -1,46 +1,69 @@
-const BSTree = require('./BinarySearch')
-const alphabet = require('./alphabet')
+const BSTree = require("./BinarySearch");
+const alphabet = require("./alphabet");
 
 class ScoreTree extends BSTree {
-    constructor(value, score) {
-        super(value)
-        this.score = score
+  constructor(value, score) {
+    super(value);
+    this.score = score;
+  }
+  insertNode(key, score) {
+    //this function inserts a letter into the morse code tree - this should run once in the beginning
+    if (!this.value) {
+      this.value = key;
+      this.score = score;
+    } else if (score > this.score && this.rightChild) {
+      this.rightChild.insertNode(key, score);
+    } else if (score <= this.score && this.leftChild) {
+      this.leftChild.insertNode(key, score);
+    } else if (score <= this.score) {
+      this.leftChild = new ScoreTree(key, score);
+    } else {
+      this.rightChild = new ScoreTree(key, score);
     }
-    insertNode(key, score) { //this function inserts a letter into the morse code tree - this should run once in the beginning
-        if (!this.value) {
-            this.value = key
-            this.score = score
-        }
-        else if (score > this.score && this.rightChild) {
-            this.rightChild.insertNode(key, score)
-        }
-        else if(score <= this.score && this.leftChild) {
-            this.leftChild.insertNode(key, score)
-        }
-        else if (score <= this.score) {
-            this.leftChild = new ScoreTree(key, score)
-        }
-        else {
-            this.rightChild = new ScoreTree(key, score)
-        }
+  }
+  findLetter(score, str = "") {
+    // this method should record the path to a given letter
+    if (score === this.score) {
+      return str;
+    } else if (score < this.score && this.leftChild) {
+      str += ".";
+      return this.leftChild.findLetter(score, str);
+    } else if (score > this.score && this.rightChild) {
+      str += "-";
+      return this.rightChild.findLetter(score, str);
     }
-    findLetter () {
-        // this method should record the path to a given letter
+  }
+  translateWord(str) {
+    //this method should translate a given word from text to Morse Code
+    let char;
+    let code = "'";
+    let result = "";
+    for (let i = 0; i < str.length; i++) {
+      code = "";
+      char = str[i];
+      if (char === " ") {
+        result += "/";
+      } else {
+        char = char.toUpperCase();
+        code = this.findLetter(alphabet[char], code);
+        result += code + " ";
+      }
     }
-    translateWord() {
-        //this method should translate a given word from text to Morse Code
-    }
-    translateMorse() {
-        // this function should translate a given code from Morse to English
-    }
+    console.log(result);
+  }
+  translateMorse() {
+    // this function should translate a given code from Morse to English
+  }
 }
 //initializing the MorseCode tree
-const morseCode = new ScoreTree("TOP", 50)
-Object.keys(alphabet).forEach(l => {
-    morseCode.insertNode(l, alphabet[l])
-})
+const morseCode = new ScoreTree("TOP", 50);
+Object.keys(alphabet).forEach((l) => {
+  morseCode.insertNode(l, alphabet[l]);
+});
 
-morseCode.translateWord("welcome") // should print .-- . .-.. -.-. --- -- . 
-morseCode.translateWord("elevation is cool") // should print . .-.. . ...- .- - .. --- -. /.. ... /-.-. --- --- .-.. 
-morseCode.translateMorse(".... ---- ....")
-morseCode.translateMorse("-. .. -.-. . / .--- --- -... / --- -. / - .... . / .-.. . ... ... --- -.")
+morseCode.translateWord("welcome"); // should print .-- . .-.. -.-. --- -- .
+morseCode.translateWord("elevation is cool"); // should print . .-.. . ...- .- - .. --- -. /.. ... /-.-. --- --- .-..
+// morseCode.translateMorse(".... ---- ....");
+// morseCode.translateMorse(
+//   "-. .. -.-. . / .--- --- -... / --- -. / - .... . / .-.. . ... ... --- -.",
+// );
